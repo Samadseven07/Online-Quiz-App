@@ -1,0 +1,19 @@
+{% extends "app/base.html" %}
+
+
+{% block content %}
+<h2>Available Quizzes</h2>
+<ul>
+    
+    {% for quizz in quizzes %}
+        <li>
+            <a href="{% url 'quiz-detail' quiz.pk %}">{{quiz.title}}</a>
+            <p>{{quiz.description|truncatewords:20}}</p>
+            <p>Difficulty: {{quiz.get_difficulty_display}}</p>
+            <p>Duration: {{quiz.duration}}</p>
+        </li>
+        {% empty %}
+        <p>No quizzes available.</p>
+    {% endfor %}
+</ul>
+{% endblock content %}

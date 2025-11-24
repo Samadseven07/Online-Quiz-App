@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block tittle %}Home   {% endblock tittle %}</title>
+</head>
+<body>
+    <header>
+         <a href="{% url 'quiz-list' %}">Home</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'admin:index' %}">Admin</a>
+                {% comment %} <a href="{% url '#' %}">Logout</a> {% endcomment %}
+            {% else %}
+                {% comment %} <a href="{% url '#' %}">Login</a> {% endcomment %}
+            {% endif %}
+    </header>
+    
+    <main>
+        
+        {% block content %}
+            
+        {% endblock content %}
+            
+    </main>
+</body>
+</html>
