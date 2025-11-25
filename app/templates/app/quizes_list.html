@@ -1,1 +1,25 @@
 {% extends "app/base.html" %}
+
+
+{% block content %}
+    {{quiz.title}}
+    {{quiz.description}}
+
+    <form  method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="question">
+            <h3>{{ field.label }}</h3>
+            {% for choice in field.field.choices %}
+                <label>
+                    <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}">
+                    {{ choice.1 }}
+                </label><br>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit">Submit Quiz</button>
+            
+    </form>
+{% endblock content %}
+    
