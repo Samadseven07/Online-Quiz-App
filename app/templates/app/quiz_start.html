@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Start Quiz{% endblock title %}
+    
+
+{% block content %}
+    <a href="{% url 'quiz_detail' quiz.pk %}">← Go Back</a>
+    <h2>Ready to begin?</h2>
+    <p>You're about to start: <strong>{{ quiz.title }}</strong></p>
+    <p>Time limit: {{ quiz.duration }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit"> Start Now</button>
+    </form>
+{% endblock content %}
+    

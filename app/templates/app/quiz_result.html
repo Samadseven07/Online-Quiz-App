@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+
+{% block title %}Result{% endblock title %}
+
+
+{% block content %}
+    <h1>Quiz Completed!</h1>
+    <p><strong>Score:</strong> {{ attempt.score }} / {{ total_count }}</p>
+    <p><strong>Percentage:</strong> {{ percentage|floatformat:2 }}%</p>
+    <p><strong>Time spent:</strong> {{ attempt.time_spent }}</p>
+
+    <h2>Review Your Answers:</h2>
+    {% for item in answer_details %}
+    <div style="margin: 15px 0; padding: 10px; border-left: 4px solid {% if item.selected and item.selected.is_correct %}green{% elif item.selected %}red{% else %}gray{% endif %};">
+        <h3>{{ forloop.counter }}. {{ item.question.text }}</h3>
+        {% if item.selected %}
+        <p><strong>Your answer:</strong> 
+            <span style="color: {% if item.selected.is_correct %}green{% else %}red{% endif %}">
+            {{ item.selected.text }}
+            </span>
+        </p>
+        {% else %}
+        <p><em>No answer selected.</em></p>
+        {% endif %}
+        <p><strong>Correct answer:</strong> {{ item.correct.text }}</p>
+    </div>
+    {% endfor %}
+
+    <a href="{% url 'quiz_list' %}">← Try Another Quiz</a>
+
+{% endblock content %}
+    

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }} - Quiz {% endblock title %}
+    
+
+{% block content %}
+    <h2>{{ quiz.title }}</h2>
+    <p>Attempt #{{ attempt_id }}</p>
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for field in form %}
+        <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
+            <h3>{{ forloop.counter }}. {{ field.label }}</h3>
+            {% for choice in field.field.choices %}
+            <label style="display: block;">
+                <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}" required>
+                {{ choice.1 }}
+            </label>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <button type="submit">Submit Answers</button>
+    </form>
+
+{% endblock content %}
+    

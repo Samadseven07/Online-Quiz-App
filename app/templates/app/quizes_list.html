@@ -1,25 +1,21 @@
-{% extends "app/base.html" %}
-
+{% extends "base.html" %}
+{% comment %} {% block tittle %}Quizz-{{ quiz.title }}{% endblock tittle %} {% endcomment %}
 
 {% block content %}
-    {{quiz.title}}
-    {{quiz.description}}
-
-    <form  method="post">
-        {% csrf_token %}
-        {% for field in form %}
-            <div class="question">
-            <h3>{{ field.label }}</h3>
-            {% for choice in field.field.choices %}
-                <label>
-                    <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}">
-                    {{ choice.1 }}
-                </label><br>
-            {% endfor %}
-        </div>
-        {% endfor %}
-        <button type="submit">Submit Quiz</button>
-            
-    </form>
+<h1>Available Quizzes</h1>
+  {% if quizzes %}
+    <ul>
+    {% for quiz in quizzes %}
+      <li>
+        <h3><a href="{% url 'quiz_detail' quiz.pk %}">{{ quiz.title }}</a></h3>
+        <p>{{ quiz.description|truncatewords:20|default:"No description" }}</p>
+        <p><strong>Duration:</strong> {{ quiz.duration }}</p>
+        <p><strong>Difficulty:</strong> {{ quiz.get_difficulty_display }}</p>
+        <hr>
+      </li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>No active quizzes available.</p>
+  {% endif %}
 {% endblock content %}
-    

@@ -67,6 +67,16 @@ TEMPLATES = [
     },
 ]
 
+# Auth template overrides (optional but explicit)
+AUTH_TEMPLATES = {
+    'login': 'auth/login.html',
+    'logout': 'auth/logout.html',
+    'password_reset': 'auth/password_reset.html',
+    'password_reset_done': 'auth/password_reset_done.html',
+    'password_reset_confirm': 'auth/password_reset_confirm.html',
+    'password_reset_complete': 'auth/password_reset_complete.html',
+}
+
 WSGI_APPLICATION = 'Quiz.wsgi.application'
 
 
