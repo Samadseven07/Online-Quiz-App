@@ -1,21 +1,27 @@
-{% extends "base.html" %}
-{% comment %} {% block tittle %}Quizz-{{ quiz.title }}{% endblock tittle %} {% endcomment %}
+{% extends 'base.html' %}
+
+{% block title %}Available Quizzes{% endblock %}
 
 {% block content %}
 <h1>Available Quizzes</h1>
-  {% if quizzes %}
+
+{% if user.is_superuser %}
+    <p><a href="{% url 'quiz-create' %}">Create New Quiz</a></p>
+{% endif %}
+
+{% if quizzes %}
     <ul>
     {% for quiz in quizzes %}
-      <li>
-        <h3><a href="{% url 'quiz_detail' quiz.pk %}">{{ quiz.title }}</a></h3>
-        <p>{{ quiz.description|truncatewords:20|default:"No description" }}</p>
-        <p><strong>Duration:</strong> {{ quiz.duration }}</p>
-        <p><strong>Difficulty:</strong> {{ quiz.get_difficulty_display }}</p>
-        <hr>
-      </li>
+        <li>
+            <h3><a href="{% url 'quiz-detail' quiz.pk %}">{{ quiz.title }}</a></h3>
+            <p>{{ quiz.description|truncatewords:20|default:"No description" }}</p>
+            <p><strong>Duration:</strong> {{ quiz.duration }}</p>
+            <p><strong>Difficulty:</strong> {{ quiz.get_difficulty_display }}</p>
+            <hr>
+        </li>
     {% endfor %}
     </ul>
-  {% else %}
+{% else %}
     <p>No active quizzes available.</p>
-  {% endif %}
-{% endblock content %}
+{% endif %}
+{% endblock %}

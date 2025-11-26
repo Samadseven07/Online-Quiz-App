@@ -1,19 +1,25 @@
-from .models import Option, Question, UserAttempt ,  Quizes
 from django import forms
 
 class QuizForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        questions = kwargs.pop('questions', [])
+        # Extract 'questions' BEFORE calling super()
+        questions = kwargs.pop('questions', None)
         super().__init__(*args, **kwargs)
 
-        for question in questions:
-            # build choices from the current question's options
-            choices = [(opt.id, opt.text) for opt in question.options.all()]
-            # field name should match what views expect (question_<id>)
-            self.fields[f"question_{question.id}"] = forms.ChoiceField(
-                label=question.text,
-                choices=choices,
-                widget=forms.RadioSelect,
-                required=True
+        if questions:
+            for question in questions:
+                # Build choices: [(option_id, option_text), ...]
+                choices = [
+                    (str(opt.id), opt.text)
+                    for opt in question.options.all()
+                    if opt.id is not None
+                ]
+                if not choices:
+                    continue
+
+                self.fields[f'question_{question.id}'] = forms.ChoiceField(
+                    label=question.text,
+                    choices=choices,
+                    widget=forms.RadioSelect,
+                    required=True
                 )
-    

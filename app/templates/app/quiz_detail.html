@@ -1,19 +1,24 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block title %}{{ object.title }}{% endblock %}
 
 {% block content %}
-    {% comment %} <a href="{% url 'quiz-detail' quiz.pk %}">← Go Back</a> {% endcomment %}
-    <h1>{{ object.title }}</h1>
-    <p>{{ object.description|default:"—" }}</p>
-    <p>Duration: {{ object.duration }} | Difficulty: {{ object.get_difficulty_display }}</p>
+{% if user.is_superuser or object.created_by == user %}
+    <p><a href="{% url 'quiz-delete' object.pk %}">Delete Quiz</a></p>
+{% endif %}
 
-    <h3>Questions Preview:</h3>
-    <ul>
-    {% for q in question %}
+<h1>{{ object.title }}</h1>
+<p>{{ object.description|default:"—" }}</p>
+<p>Duration: {{ object.duration }} | Difficulty: {{ object.get_difficulty_display }}</p>
+
+<h3>Questions Preview:</h3>
+<ul>
+{% for q in question %}
     <li>{{ q.text }}</li>
-    {% endfor %}
-    </ul>
+{% endfor %}
+</ul>
 
-    <a href="{% url 'quiz-start' object.pk %}">
-    <button>Start Quiz</button></a>
-
-{% endblock content %}
+<a href="{% url 'quiz-start' object.pk %}">
+    <button>Start Quiz</button>
+</a>
+{% endblock %}

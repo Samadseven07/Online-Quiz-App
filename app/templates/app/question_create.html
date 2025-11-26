@@ -1,0 +1,14 @@
+<!-- templates/app/question_create.html -->
+{% extends 'base.html' %}
+
+{% block title %}Add Question to {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<h2>Add Question to "{{ quiz.title }}"</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Question</button>
+    <a href="{% url 'quiz-detail' quiz.pk %}">Cancel</a>
+</form>
+{% endblock %}

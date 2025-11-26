@@ -1,28 +1,35 @@
+<!-- templates/app/quiz_take.html -->
 {% extends "base.html" %}
 
-{% block title %}{{ quiz.title }} - Quiz {% endblock title %}
-    
+{% block title %}{{ quiz.title }} - Quiz{% endblock %}
 
 {% block content %}
-    <h2>{{ quiz.title }}</h2>
-    <p>Attempt #{{ attempt_id }}</p>
-    <form method="post">
-        {% csrf_token %}
-        
-        {% for field in form %}
-        <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
+<h2>{{ quiz.title }}</h2>
+<p>Attempt -{{ attempt_id }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {% if form.errors %}
+        <div style="color:red; margin-bottom: 10px;">
+            There are errors in your form. Please fix them.
+        </div>
+    {% endif %}
+    {% for field in form %}
+        <div>
             <h3>{{ forloop.counter }}. {{ field.label }}</h3>
             {% for choice in field.field.choices %}
-            <label style="display: block;">
-                <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}" required>
-                {{ choice.1 }}
-            </label>
+                <label>
+                    <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}" required>
+                    {{ choice.1 }}
+                </label><br>
             {% endfor %}
+            {% if field.errors %}
+                <div style="color:red; font-size:0.9em;">
+                    {{ field.errors }}
+                </div>
+            {% endif %}
         </div>
-        {% endfor %}
-
-        <button type="submit">Submit Answers</button>
-    </form>
-
-{% endblock content %}
-    
+    {% endfor %}
+    <button type="submit">Submit Answers</button>
+</form>
+{% endblock %}

@@ -1,4 +1,3 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,16 +7,19 @@
 </head>
 <body>
     <nav>
-        <a href="{% url 'quiz_list' %}">Home</a>
-        {% if user.is_authenticated %}
-           <form action="/">
-               Hello, <strong>{{ user.username }}</strong>!
-               <a href="{% url 'logout' %}">Logout</a>
-           </form>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'register' %}">Register</a>
-        {% endif %}
+        <div>
+            {% if user.is_authenticated %}
+               <strong><a href="{% url 'quiz-list' %}">{{ user.first_name }}</a></strong>!
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none;border:none;padding:0;margin:0;color:#0066cc;cursor:pointer;">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'quiz-list' %}">Home</a>
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </div>
     </nav>
 
     <main>
@@ -29,7 +31,11 @@
             {% endfor %}
         {% endif %}
 
-        {% block content %}{% endblock %}
+        <div class="container">
+            {% block content %}
+
+            {% endblock %}
+        </div>
     </main>
 </body>
 </html>

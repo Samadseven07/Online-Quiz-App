@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "app",
+    "authentication",
+    
+    
+
 ]
 
 MIDDLEWARE = [
@@ -62,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.csrf'
             ],
         },
     },
@@ -109,6 +114,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'  # redirect users to homepage after logout
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/

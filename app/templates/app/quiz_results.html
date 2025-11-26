@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Results{% endblock %}
+
+{% block content %}
+<h1>Quiz Results</h1>
+<p><strong>Quiz:</strong> {{ attempt.quiz.title }}</p>
+<p><strong>Score:</strong> {{ attempt.score }} / {{ total_count }}</p>
+<p><strong>Percentage:</strong> {{ percentage|floatformat:2 }}%</p>
+<p><strong>Time spent:</strong> {{ attempt.time_spent }}</p>
+
+<h2>Answers</h2>
+{% for item in answer_details %}
+  <div style="margin-bottom:12px; padding:8px; border:1px solid #ccc;">
+    <strong>{{ forloop.counter }}. {{ item.question.text }}</strong>
+    <p>Your answer: {% if item.selected %}{{ item.selected.text }}{% else %}<em>None</em>{% endif %}</p>
+    <p>Correct answer: {% if item.correct %}{{ item.correct.text }}{% else %}<em>None</em>{% endif %}</p>
+  </div>
+{% endfor %}
+
+<p><a href="{% url 'quiz-list' %}">Back to quizzes</a></p>
+
+{% endblock %}
