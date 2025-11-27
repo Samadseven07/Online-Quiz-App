@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ object.text }}{% endblock %}
+
+{% block content %}
+<h2>Edit Question: "{{ object.text }}"</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+    <a href="{% url 'quiz-detail' object.quiz.pk %}">Cancel</a>
+</form>
+
+<hr>
+<h3>Options</h3>
+<ul>
+{% for opt in object.options.all %}
+    <li>
+        {{ opt.text }} {% if opt.is_correct %}(✓ Correct){% endif %}
+        <a href="{% url 'option-update' opt.pk %}">✏️ Edit</a>
+        <a href="{% url 'option-delete' opt.pk %}" onclick="return confirm('Delete?')">🗑️ Delete</a>
+    </li>
+{% empty %}
+    <li>No options. <a href="{% url 'question-option-create' object.pk %}">➕ Add Option</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

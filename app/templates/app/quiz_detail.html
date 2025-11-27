@@ -1,52 +1,29 @@
+<!-- templates/app/quiz_detail.html -->
 {% extends 'base.html' %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block content %}
-
-{% if user.is_superuser or object.created_by == user %}
-    <div>
-        <a href="{% url 'quiz-delete' object.pk %}">🗑️ Delete Quiz</a> |
-        <a href="{% url 'quiz-question-create' object.pk %}">➕ Create New Question</a>
-    </div>
-    <hr>
-{% endif %}
-
 <h1>{{ object.title }}</h1>
 <p><strong>Description:</strong> {{ object.description|default:"—" }}</p>
-<p>
-    <strong>Duration:</strong> {{ object.duration }} |
-    <strong>Difficulty:</strong> {{ object.get_difficulty_display }}
-</p>
+<p><strong>Duration:</strong> {{ object.duration }} | <strong>Difficulty:</strong> {{ object.get_difficulty_display }}</p>
 
-<hr>
-
-<h2>Questions</h2>
-
-{% if question %}
-    <ol>
-    {% for q in question %}
-        <li>
-            <h3>{{ q.text }}</h3>
-
-            {% if user.is_superuser or object.created_by == user %}
-                <a href="{% url 'question-update' q.pk %}">
-                    <button>Edit Question</button>
-                </a>
-            {% endif %}
-        </li>
-    {% endfor %}
-    </ol>
-{% else %}
-    <p>No questions added yet.</p>
+{% if user.is_superuser or object.created_by == user %}
+    <p><a href="{% url 'quiz-manage' object.pk %}">Manage Quiz</a></p>
 {% endif %}
 
-<hr>
+<h2>Questions</h2>
+<ol>
+{% for q in question|slice:"3" %}
+    <li>{{ q.text }}</li>
+{% empty %}
+    <li>No questions yet.</li>
+{% endfor %}
+</ol>
 
-<p>
-    <a href="{% url 'quiz-start' object.pk %}">
-        <button>Start Quiz</button>
-    </a>
-</p>
+<hr>
+<a href="{% url 'quiz-start' object.pk %}">
+    <button>Start Quiz</button>
+</a>
 
 {% endblock %}

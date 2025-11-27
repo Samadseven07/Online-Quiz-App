@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     QuizListView, QuizDetailView, QuizStartView, QuizTakeView, QuizResultsView,
     CreateQuizView, DeleteQuizView, CreateQuestionView, CreateOptionView, QuestionDetailView, QuestionUpdateView, 
-    QuestionDeleteView, OptionDeleteView
+    QuestionDeleteView, OptionDeleteView, OptionUpdateView, QuizManagementView, QuizUpdateView
 )
 
 urlpatterns = [
@@ -17,9 +17,12 @@ urlpatterns = [
     path("quiz/<int:quiz_id>/question/create/", CreateQuestionView.as_view(), name="quiz-question-create"),
     path("question/<int:pk>/", QuestionDetailView.as_view(), name="question-detail"),
     path('question/<int:pk>/delete/', QuestionDeleteView.as_view(), name='question-delete'),
+    
     path("question/<int:question_id>/option/create/", CreateOptionView.as_view(), name="question-option-create"),
     path('question/<int:pk>/update/', QuestionUpdateView.as_view(), name='question-update'),
     path('option/<int:pk>/delete/', OptionDeleteView.as_view(), name='option-delete'),
+    path("option/<int:pk>/update/", OptionUpdateView.as_view(), name="option-update"),
+    path("quiz/<int:pk>/manage/", QuizManagementView.as_view(), name="quiz-manage"),
 
-
+    path("quiz/<int:pk>/update/", QuizUpdateView.as_view(), name="quiz-update"),
 ]

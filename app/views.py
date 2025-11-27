@@ -25,10 +25,58 @@ class QuizDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         quiz = self.get_object()
-        context["question"] = quiz.questions.all().order_by("order")[:3]
+        context["question"] = quiz.questions.all().order_by("order")
         return context
 
-# app/views.py
+@method_decorator(login_required, name='dispatch')
+class QuizManagementView(DetailView):
+    model = Quizes
+    template_name = 'app/quiz_manage.html'
+    context_object_name = 'quiz'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        # Only allow creator or superuser
+        if obj.created_by != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['questions'] = self.object.questions.all().order_by('order')
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class QuizUpdateView(UpdateView):
+    model = Quizes
+    fields = ['title', 'description', 'duration', 'difficulty', 'is_active']
+    template_name = 'app/quiz_manage.html'  # Reuse the same template
+    context_object_name = 'quiz'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.created_by != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['questions'] = self.object.questions.all().order_by('order')
+        return context
+
+    def form_valid(self, form):
+        # Handle duration as string (e.g., "00:10:00") → convert to timedelta
+        duration_str = self.request.POST.get('duration', '00:10:00')
+        try:
+            from datetime import timedelta
+            h, m, s = map(int, duration_str.split(':'))
+            form.instance.duration = timedelta(hours=h, minutes=m, seconds=s)
+        except (ValueError, AttributeError):
+            form.instance.duration = timedelta(minutes=10)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('quiz-manage', kwargs={'pk': self.object.pk})
 
 @method_decorator(login_required, name='dispatch')
 class CreateQuizView(CreateView):
@@ -140,7 +188,7 @@ class QuestionDeleteView(DeleteView):
         return reverse_lazy('quiz-detail', kwargs={'pk': self.object.quiz.pk})
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')  
 class CreateOptionView(CreateView):
     model = Option
     fields = ['text', 'is_correct', 'feedback']
@@ -173,6 +221,22 @@ class DeleteQuizView(DeleteView):
         if obj.created_by != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
         return obj
+
+@method_decorator(login_required, name='dispatch')
+class OptionUpdateView(UpdateView):
+    model = Option
+    fields = ['text', 'is_correct', 'feedback']
+    template_name = 'app/option_update.html'
+    context_object_name = 'option'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.question.quiz.created_by != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+        return obj
+
+    def get_success_url(self):
+        return reverse_lazy('question-update', kwargs={'pk': self.object.question.pk})
 
 @method_decorator(login_required, name='dispatch')
 class OptionDeleteView(DeleteView):
@@ -310,3 +374,6 @@ class QuizResultsView(DetailView):
         context["total_count"] = total_questions
         context["percentage"] = (correct_count / total_questions * 100) if total_questions > 0 else 0
         return context
+    
+def error_404(request, exception):
+    return render(request, 'app/404.html', status=404)

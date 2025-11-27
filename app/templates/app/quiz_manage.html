@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Quiz: {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<h1>Manage Quiz: "{{ quiz.title }}"</h1>
+
+<div>
+    <a href="{% url 'quiz-detail' quiz.pk %}">View Quiz</a> |
+    <a href="{% url 'quiz-delete' quiz.pk %}" onclick="return confirm('Delete entire quiz?')">Delete Quiz</a>
+</div>
+
+<hr>
+
+<!-- Edit Quiz Info Form -->
+<h2>Quiz Information</h2>
+<form method="post" action="{% url 'quiz-manage' quiz.pk %}">
+    {% csrf_token %}
+    <div style="margin-bottom: 15px;">
+        <label for="id_title"><strong>Title</strong></label><br>
+        <input type="text" name="title" value="{{ quiz.title }}" id="id_title" required style="width: 100%; max-width: 600px; padding: 6px;">
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label for="id_description"><strong>Description</strong></label><br>
+        <textarea name="description" id="id_description" rows="3" style="width: 100%; max-width: 600px; padding: 6px;">{{ quiz.description }}</textarea>
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label for="id_duration"><strong>Duration (e.g., 00:10:00 for 10 mins)</strong></label><br>
+        <input type="text" name="duration" value="{{ quiz.duration|date:'H:i:s' }}" id="id_duration" placeholder="HH:MM:SS" style="width: 120px; padding: 6px;">
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label><strong>Difficulty</strong></label><br>
+        <select name="difficulty" id="id_difficulty">
+            <option value="E" {% if quiz.difficulty == 'E' %}selected{% endif %}>Easy</option>
+            <option value="M" {% if quiz.difficulty == 'M' %}selected{% endif %}>Medium</option>
+            <option value="H" {% if quiz.difficulty == 'H' %}selected{% endif %}>Hard</option>
+        </select>
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label>
+            <input type="checkbox" name="is_active" value="true" {% if quiz.is_active %}checked{% endif %}>
+            Active (can be attempted)
+        </label>
+    </div>
+    <button type="submit">Save Quiz Info</button>
+</form>
+
+<hr>
+
+<h2>Questions</h2>
+{% if questions %}
+    <ol>
+    {% for q in questions %}
+        <li style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong>{{ q.order }}. {{ q.text }}</strong>
+                <a href="{% url 'question-update' q.pk %}">Edit Question & Options</a>
+            </div>
+            
+            {% if q.options.exists %}
+                <ul style="margin-top: 8px; padding-left: 20px;">
+                {% for opt in q.options.all %}
+                    <li>
+                        {{ opt.text }} {% if opt.is_correct %}<strong>(Correct)</strong>{% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color: #888; font-style: italic;">No options yet.</p>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ol>
+{% else %}
+    <p>No questions yet.</p>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'quiz-question-create' quiz.pk %}">+ Add New Question</a>
+</div>
+
+{% endblock %}
