@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Delete Option</h1>
+<p>Are you sure you want to delete this option?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+    <a href="{% url 'question-update' object.question.pk %}">Cancel</a>
+</form>
+{% endblock %}

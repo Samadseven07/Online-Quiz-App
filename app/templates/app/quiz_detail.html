@@ -3,22 +3,50 @@
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block content %}
+
 {% if user.is_superuser or object.created_by == user %}
-    <p><a href="{% url 'quiz-delete' object.pk %}">Delete Quiz</a></p>
+    <div>
+        <a href="{% url 'quiz-delete' object.pk %}">🗑️ Delete Quiz</a> |
+        <a href="{% url 'quiz-question-create' object.pk %}">➕ Create New Question</a>
+    </div>
+    <hr>
 {% endif %}
 
 <h1>{{ object.title }}</h1>
-<p>{{ object.description|default:"—" }}</p>
-<p>Duration: {{ object.duration }} | Difficulty: {{ object.get_difficulty_display }}</p>
+<p><strong>Description:</strong> {{ object.description|default:"—" }}</p>
+<p>
+    <strong>Duration:</strong> {{ object.duration }} |
+    <strong>Difficulty:</strong> {{ object.get_difficulty_display }}
+</p>
 
-<h3>Questions Preview:</h3>
-<ul>
-{% for q in question %}
-    <li>{{ q.text }}</li>
-{% endfor %}
-</ul>
+<hr>
 
-<a href="{% url 'quiz-start' object.pk %}">
-    <button>Start Quiz</button>
-</a>
+<h2>Questions</h2>
+
+{% if question %}
+    <ol>
+    {% for q in question %}
+        <li>
+            <h3>{{ q.text }}</h3>
+
+            {% if user.is_superuser or object.created_by == user %}
+                <a href="{% url 'question-update' q.pk %}">
+                    <button>Edit Question</button>
+                </a>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ol>
+{% else %}
+    <p>No questions added yet.</p>
+{% endif %}
+
+<hr>
+
+<p>
+    <a href="{% url 'quiz-start' object.pk %}">
+        <button>Start Quiz</button>
+    </a>
+</p>
+
 {% endblock %}

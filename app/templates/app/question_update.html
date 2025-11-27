@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="{% url 'quiz-detail' question.quiz.pk %}">← Back to Quiz</a>
+<h1>Update Question</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <!-- Question Text -->
+    <h3>Question Text</h3>
+    {{ form.as_p }}
+
+    <hr>
+
+    <!-- Existing Options -->
+    <h3>Existing Options</h3>
+
+    {% for opt in options %}
+        <div>
+            <p>Option {{ forloop.counter }}</p>
+
+            <!-- Edit Option Text -->
+            <input type="text" name="option_text_{{ opt.id }}" value="{{ opt.text }}">
+
+            <!-- Mark Correct -->
+            <label>
+                <input type="checkbox" name="option_correct_{{ opt.id }}"
+                       {% if opt.is_correct %}checked{% endif %}>
+                Correct
+            </label>
+
+            <!-- Delete Option Button -->
+            <a href="{% url 'option-delete' opt.pk %}">
+                <button type="button">Delete Option</button>
+            </a>
+        </div>
+        <br>
+    {% endfor %}
+
+    <hr>
+
+    <!-- Add New Option -->
+    <h3>Add New Option</h3>
+
+    <input type="text" name="new_option_text" placeholder="New option text">
+
+    <label>
+        <input type="checkbox" name="new_option_correct">
+        Correct
+    </label>
+
+    <br><br>
+
+    <button type="submit">Save Changes</button>
+</form>
+<a href="{% url 'question-delete' question.pk %}">
+    <button type="button">Delete This Question</button>
+</a>
+
+{% endblock %}

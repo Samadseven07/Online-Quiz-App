@@ -1,14 +1,36 @@
-<!-- templates/app/question_create.html -->
 {% extends 'base.html' %}
 
-{% block title %}Add Question to {{ quiz.title }}{% endblock %}
+{% block title %}Add Question — {{ quiz.title }}{% endblock %}
 
 {% block content %}
-<h2>Add Question to "{{ quiz.title }}"</h2>
+<h2>Add a new question to "{{ quiz.title }}"</h2>
+<p><strong>Quiz:</strong> <a href="{% url 'quiz-detail' quiz.pk %}">{{ quiz.title }}</a></p>
+
+{% if form.non_field_errors %}
+    <div class="errorlist">
+        {% for err in form.non_field_errors %}
+            <p>{{ err }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Question</button>
-    <a href="{% url 'quiz-detail' quiz.pk %}">Cancel</a>
+    {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+                <div class="errorlist">
+                    {% for error in field.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <button type="submit">Create Question</button>
 </form>
+
+<p><a href="{% url 'quiz-detail' quiz.pk %}">Back to Quiz</a></p>
 {% endblock %}
