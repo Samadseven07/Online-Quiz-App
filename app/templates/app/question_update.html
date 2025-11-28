@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<a href="{% url 'quiz-detail' question.quiz.pk %}">← Back to Quiz</a>
+<a href="{% url 'quiz-detail' question.quiz.pk %}">Back to Quiz</a>
 <h1>Update Question</h1>
 
 <form method="post">
     {% csrf_token %}
-
-    <!-- Question Text -->
+        <a href="{% url 'question-delete' question.pk %}">
+        <button type="button">Delete This Question</button>
+    </a>|
+    <button type="submit">Save Changes</button>
     <h3>Question Text</h3>
     {{ form.as_p }}
 
@@ -52,10 +54,8 @@
 
     <br><br>
 
-    <button type="submit">Save Changes</button>
+    
 </form>
-<a href="{% url 'question-delete' question.pk %}">
-    <button type="button">Delete This Question</button>
-</a>
+
 
 {% endblock %}

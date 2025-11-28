@@ -1,35 +1,44 @@
 <!-- templates/app/quiz_take.html -->
 {% extends "base.html" %}
-
 {% block title %}{{ quiz.title }} - Quiz{% endblock %}
-
 {% block content %}
-<h2>{{ quiz.title }}</h2>
-<p>Attempt -{{ attempt_id }}</p>
-
-<form method="post">
-    {% csrf_token %}
-    {% if form.errors %}
-        <div style="color:red; margin-bottom: 10px;">
-            There are errors in your form. Please fix them.
+<div class="quiz-take-form">
+    <h2>{{ quiz.title }}</h2>
+    <p class="timer-display" data-duration="{{ quiz.duration }}">Time remaining: {{ quiz.duration }}</p>
+    <p>Attempt #{{ attempt_id }}</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="alert alert-danger mb-2">
+                There are errors in your form. Please fix them.
+            </div>
+        {% endif %}
+        
+        {% for field in form %}
+            <div class="quiz-question">
+                <h3>{{ forloop.counter }}. {{ field.label }}</h3>
+                {% for choice in field.field.choices %}
+                    <div class="choice">
+                        <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}" id="choice_{{ field.name }}_{{ forloop.counter }}" required>
+                        <label for="choice_{{ field.name }}_{{ forloop.counter }}">
+                            {{ choice.1 }}
+                        </label>
+                    </div>
+                {% endfor %}
+                {% if field.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle-fill me-2"></i>Submit Answers
+            </button>
         </div>
-    {% endif %}
-    {% for field in form %}
-        <div>
-            <h3>{{ forloop.counter }}. {{ field.label }}</h3>
-            {% for choice in field.field.choices %}
-                <label>
-                    <input type="radio" name="{{ field.name }}" value="{{ choice.0 }}" required>
-                    {{ choice.1 }}
-                </label><br>
-            {% endfor %}
-            {% if field.errors %}
-                <div style="color:red; font-size:0.9em;">
-                    {{ field.errors }}
-                </div>
-            {% endif %}
-        </div>
-    {% endfor %}
-    <button type="submit">Submit Answers</button>
-</form>
+    </form>
+</div>
 {% endblock %}

@@ -8,13 +8,13 @@
 <div>
     <a href="{% url 'quiz-detail' quiz.pk %}">View Quiz</a> |
     <a href="{% url 'quiz-delete' quiz.pk %}" onclick="return confirm('Delete entire quiz?')">Delete Quiz</a>
+    <a href="{% url 'quiz-question-create' quiz.pk %}">+ Add New Question</a>
 </div>
 
 <hr>
 
-<!-- Edit Quiz Info Form -->
 <h2>Quiz Information</h2>
-<form method="post" action="{% url 'quiz-manage' quiz.pk %}">
+<form method="post" action="{% url 'quiz-update' quiz.pk %}">
     {% csrf_token %}
     <div style="margin-bottom: 15px;">
         <label for="id_title"><strong>Title</strong></label><br>
@@ -46,7 +46,11 @@
 </form>
 
 <hr>
-
+{% if messages %}
+    {% for message in messages %}
+        <div>{{ message }}</div>
+    {% endfor %}
+{% endif %}
 <h2>Questions</h2>
 {% if questions %}
     <ol>
@@ -54,7 +58,7 @@
         <li style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <strong>{{ q.order }}. {{ q.text }}</strong>
-                <a href="{% url 'question-update' q.pk %}">Edit Question & Options</a>
+                <a href="{% url 'question-update' q.pk %}">Edit</a>
             </div>
             
             {% if q.options.exists %}
@@ -74,9 +78,4 @@
 {% else %}
     <p>No questions yet.</p>
 {% endif %}
-
-<div style="margin-top: 20px;">
-    <a href="{% url 'quiz-question-create' quiz.pk %}">+ Add New Question</a>
-</div>
-
 {% endblock %}

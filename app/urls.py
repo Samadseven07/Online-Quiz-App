@@ -22,7 +22,6 @@ urlpatterns = [
     path('question/<int:pk>/update/', QuestionUpdateView.as_view(), name='question-update'),
     path('option/<int:pk>/delete/', OptionDeleteView.as_view(), name='option-delete'),
     path("option/<int:pk>/update/", OptionUpdateView.as_view(), name="option-update"),
-    path("quiz/<int:pk>/manage/", QuizManagementView.as_view(), name="quiz-manage"),
-
     path("quiz/<int:pk>/update/", QuizUpdateView.as_view(), name="quiz-update"),
+    path("quiz/<int:pk>/manage/", QuizManagementView.as_view(), name="quiz-manage"),
 ]

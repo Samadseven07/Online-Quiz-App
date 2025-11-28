@@ -1,23 +1,65 @@
 {% extends 'base.html' %}
-
 {% block title %}Quiz Results{% endblock %}
-
 {% block content %}
-<h1>Quiz Results</h1>
-<p><strong>Quiz:</strong> {{ attempt.quiz.title }}</p>
-<p><strong>Score:</strong> {{ attempt.score }} / {{ total_count }}</p>
-<p><strong>Percentage:</strong> {{ percentage|floatformat:2 }}%</p>
-<p><strong>Time spent:</strong> {{ attempt.time_spent }}</p>
-
-<h2>Answers</h2>
-{% for item in answer_details %}
-  <div style="margin-bottom:12px; padding:8px; border:1px solid #ccc;">
-    <strong>{{ forloop.counter }}. {{ item.question.text }}</strong>
-    <p>Your answer: {% if item.selected %}{{ item.selected.text }}{% else %}<em>None</em>{% endif %}</p>
-    <p>Correct answer: {% if item.correct %}{{ item.correct.text }}{% else %}<em>None</em>{% endif %}</p>
-  </div>
-{% endfor %}
-
-<p><a href="{% url 'quiz-list' %}">Back to quizzes</a></p>
-
+<div class="results-container">
+    <div class="results-header text-center">
+        <h1>Quiz Completed!</h1>
+        <p><strong>Score:</strong> {{ attempt.score }} / {{ total_count }}</p>
+        <p><strong>Percentage:</strong> {{ percentage|floatformat:2 }}%</p>
+        <p><strong>Time spent:</strong> {{ attempt.time_spent }}</p>
+    </div>
+    
+    <div class="results-summary">
+        <div class="stat">
+            <h4>Score</h4>
+            <p>{{ attempt.score }} / {{ total_count }}</p>
+        </div>
+        <div class="stat">
+            <h4>Percentage</h4>
+            <p>{{ percentage|floatformat:2 }}%</p>
+        </div>
+        <div class="stat">
+            <h4>Time Spent</h4>
+            <p>{{ attempt.time_spent }}</p>
+        </div>
+    </div>
+    
+    <h2>Review Your Answers:</h2>
+    {% for item in answer_details %}
+        <div class="review-item">
+            <h3>{{ forloop.counter }}. {{ item.question.text }}</h3>
+            <div class="answer-row">
+                <span class="answer-label">Your answer:</span>
+                <span class="answer-value">
+                    {% if item.selected %}
+                        {{ item.selected.text }}
+                        {% if item.selected.is_correct %}
+                            <span class="answer-correct">(Correct!)</span>
+                        {% else %}
+                            <span class="answer-wrong">(Incorrect)</span>
+                        {% endif %}
+                    {% else %}
+                        <em>None</em>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="answer-row">
+                <span class="answer-label">Correct answer:</span>
+                <span class="answer-value">
+                    {% if item.correct %}
+                        {{ item.correct.text }}
+                    {% else %}
+                        <em>None</em>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    {% endfor %}
+    
+    <div class="text-center mt-3">
+        <a href="{% url 'quiz-list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Try Another Quiz
+        </a>
+    </div>
+</div>
 {% endblock %}

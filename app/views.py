@@ -7,7 +7,9 @@ from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
 from .models import Quizes, Question, Option, UserAttempt
 from .forms import QuizForm
+from django.contrib import messages
 from django import forms
+
 class QuizListView(ListView):
     model = Quizes
     template_name = 'app/quizes_list.html'
@@ -36,7 +38,6 @@ class QuizManagementView(DetailView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
-        # Only allow creator or superuser
         if obj.created_by != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
         return obj
@@ -50,7 +51,7 @@ class QuizManagementView(DetailView):
 class QuizUpdateView(UpdateView):
     model = Quizes
     fields = ['title', 'description', 'duration', 'difficulty', 'is_active']
-    template_name = 'app/quiz_manage.html'  # Reuse the same template
+    template_name = 'app/quiz_manage.html'
     context_object_name = 'quiz'
 
     def get_object(self, queryset=None):
@@ -59,19 +60,16 @@ class QuizUpdateView(UpdateView):
             raise PermissionDenied
         return obj
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['questions'] = self.object.questions.all().order_by('order')
-        return context
-
     def form_valid(self, form):
-        # Handle duration as string (e.g., "00:10:00") → convert to timedelta
+        messages.success(self.request, "Quiz info updated successfully.")
         duration_str = self.request.POST.get('duration', '00:10:00')
         try:
             from datetime import timedelta
+            # Convert to string to handle SimpleLazyObject or other types
+            duration_str = str(duration_str).strip()
             h, m, s = map(int, duration_str.split(':'))
             form.instance.duration = timedelta(hours=h, minutes=m, seconds=s)
-        except (ValueError, AttributeError):
+        except (ValueError, AttributeError, TypeError):
             form.instance.duration = timedelta(minutes=10)
         return super().form_valid(form)
 
@@ -115,7 +113,7 @@ class CreateQuestionView(CreateView):
     def get_success_url(self):
         return reverse_lazy('quiz-detail', kwargs={'pk': self.kwargs['quiz_id']})
     
-@method_decorator(login_required, name='dispatch')
+# @method_decorator(login_required, name='dispatch')
 class QuestionDetailView(DetailView):
     model = Question
     template_name = 'app/question_detail.html'
@@ -275,6 +273,7 @@ class QuizStartView(FormView):
             attempt.attempt_number += 1
             attempt.save()
         return redirect('quiz-take', quiz_id=quiz.pk, attempt_id=attempt.pk)
+    
 @method_decorator(login_required, name='dispatch')
 class QuizTakeView(FormView):
     template_name = 'app/quiz_take.html'

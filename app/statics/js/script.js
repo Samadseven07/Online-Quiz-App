@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-    {% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,5 +41,17 @@
     
     <!-- Custom JavaScript -->
     <script src="{% static 'js/script.js' %}"></script>
+    
+    <!-- Add this script to handle timer display if needed -->
+    <script>
+        // If you want to display a timer on quiz detail pages
+        document.addEventListener('DOMContentLoaded', function() {
+            // Example: Add timer functionality to quiz detail page
+            const quizDuration = document.querySelector('[data-duration]');
+            if (quizDuration) {
+                // You can customize this based on your needs
+            }
+        });
+    </script>
 </body>
 </html>
