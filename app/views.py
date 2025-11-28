@@ -83,14 +83,11 @@ class CreateQuizView(CreateView):
     template_name = 'app/quiz_create.html'
     success_url = reverse_lazy('quiz-list')
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.fields['available_until'].required = False
-        return form
-
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
+  
+    
 
 @method_decorator(login_required, name='dispatch')
 class CreateQuestionView(CreateView):
@@ -111,7 +108,8 @@ class CreateQuestionView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('quiz-detail', kwargs={'pk': self.kwargs['quiz_id']})
+        return reverse_lazy('quiz-manage', kwargs={'pk': self.kwargs['quiz_id']})
+      
     
 # @method_decorator(login_required, name='dispatch')
 class QuestionDetailView(DetailView):
@@ -163,7 +161,7 @@ class QuestionUpdateView(UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('quiz-detail', kwargs={'pk': self.object.quiz.pk})
+        return reverse_lazy('question-update', kwargs={'pk': self.object.pk})
     
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
@@ -177,14 +175,14 @@ class QuestionDeleteView(DeleteView):
     template_name = 'app/question_confirm_delete.html'
 
     def get_object(self, queryset=None):
+        messages.success(self.request, "Option deleted.")
         obj = super().get_object(queryset)
         if obj.quiz.created_by != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
         return obj
-
     def get_success_url(self):
-        return reverse_lazy('quiz-detail', kwargs={'pk': self.object.quiz.pk})
-
+        return reverse_lazy('quiz-manage', kwargs={'pk': self.object.quiz.pk})
+    
 
 @method_decorator(login_required, name='dispatch')  
 class CreateOptionView(CreateView):
@@ -205,7 +203,7 @@ class CreateOptionView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('quiz-detail', kwargs={'pk': self.object.question.quiz.pk})
+        return reverse_lazy('quiz-manage', kwargs={'pk': self.object.question.quiz.pk})
     
 @method_decorator(login_required, name='dispatch')
 class DeleteQuizView(DeleteView):
@@ -232,9 +230,8 @@ class OptionUpdateView(UpdateView):
         if obj.question.quiz.created_by != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
         return obj
-
     def get_success_url(self):
-        return reverse_lazy('question-update', kwargs={'pk': self.object.question.pk})
+        return reverse_lazy('option-update', kwargs={'pk': self.object.pk})
 
 @method_decorator(login_required, name='dispatch')
 class OptionDeleteView(DeleteView):
@@ -248,7 +245,7 @@ class OptionDeleteView(DeleteView):
         return obj
 
     def get_success_url(self):
-        return reverse_lazy('question-update', kwargs={'pk': self.object.question.pk})
+        return reverse_lazy('quiz-manage', kwargs={'pk': self.object.question.quiz.pk})
 
 
 @method_decorator(login_required, name='dispatch')
