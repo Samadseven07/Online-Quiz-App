@@ -3,6 +3,7 @@
 {% block title %}Add Question — {{ quiz.title }}{% endblock %}
 
 {% block content %}
+<p><a href="{% url 'quiz-detail' quiz.pk %}">Back to Quiz</a></p>
 <h2>Add a new question to "{{ quiz.title }}"</h2>
 <p><strong>Quiz:</strong> <a href="{% url 'quiz-detail' quiz.pk %}">{{ quiz.title }}</a></p>
 
@@ -31,6 +32,4 @@
     {% endfor %}
     <button type="submit">Create Question</button>
 </form>
-
-<p><a href="{% url 'quiz-detail' quiz.pk %}">Back to Quiz</a></p>
 {% endblock %}

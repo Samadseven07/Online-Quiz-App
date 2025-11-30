@@ -1,51 +1,51 @@
 <!-- templates/app/quiz_detail.html -->
 {% extends 'base.html' %}
+
 {% block title %}{{ object.title }}{% endblock %}
+
 {% block content %}
-<div class="quiz-header">
-    <h1>{{ object.title }}</h1>
-    <p><strong>Description:</strong> {{ object.description|default:"—" }}</p>
-    <div class="meta">
+<div class="container">
+  <div class="quiz-detail-card">
+    <div class="quiz-header">
+      <h1>{{ object.title }}</h1>
+      <p><strong>Description:</strong> {{ object.description|default:"—" }}</p>
+      <div class="meta">
         <span><strong>Duration:</strong> {{ object.duration }}</span>
         <span><strong>Difficulty:</strong> {{ object.get_difficulty_display }}</span>
-    </div>
-    
-    {% if user.is_superuser or object.created_by == user %}
+      </div>
+      
+      {% if user.is_superuser or object.created_by == user %}
         <div class="mt-2">
-            <a href="{% url 'quiz-manage' object.pk %}" class="btn btn-primary">Manage Quiz</a>
+          <a href="{% url 'quiz-manage' object.pk %}" class="btn btn-primary">Manage Quiz</a>
         </div>
-    {% endif %}
-</div>
+      {% endif %}
+    </div>
 
-<h2>Questions</h2>
-<ol class="questions-list">
-{% for q in question|slice:"3" %}
-    <li class="question-item">
+    <h2>Questions</h2>
+    <ol class="questions-list">
+    {% for q in question|slice:"3" %}
+      <li class="question-item">
         <h3>{{ q.text }}</h3>
         {% if q.options.exists %}
-            <ul class="options">
-            {% for opt in q.options.all %}
-                <li {% if opt.is_correct %}class="correct"{% endif %}>
-                    {{ opt.text }} {% if opt.is_correct %}<strong>(Correct)</strong>{% endif %}
-                </li>
-            {% endfor %}
-            </ul>
+          </ul>
         {% else %}
-            <p class="text-muted">No options yet.</p>
+          <p class="text-muted">No options yet.</p>
         {% endif %}
-    </li>
-{% empty %}
-    <li class="question-item">
+      </li>
+    {% empty %}
+      <li class="question-item">
         <p>No questions yet.</p>
-    </li>
-{% endfor %}
-</ol>
+      </li>
+    {% endfor %}
+    </ol>
 
-<hr>
+    <hr>
 
-<div class="text-center">
-    <a href="{% url 'quiz-start' object.pk %}" class="btn btn-primary">
-        <i class="bi bi-play-circle-fill me-2"></i>Start Quiz
-    </a>
+    <div class="text-center">
+      <a href="{% url 'quiz-start' object.pk %}" class="btn btn-primary">
+        Start Quiz
+      </a>
+    </div>
+  </div>
 </div>
 {% endblock %}

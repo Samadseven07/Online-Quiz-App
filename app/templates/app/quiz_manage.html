@@ -1,81 +1,96 @@
+<!-- templates/app/quiz_manage.html -->
 {% extends 'base.html' %}
 
 {% block title %}Manage Quiz: {{ quiz.title }}{% endblock %}
 
 {% block content %}
-<h1>Manage Quiz: "{{ quiz.title }}"</h1>
+<div class="container">
+  <div class="quiz-manage-card">
+    <h1>Manage Quiz: "{{ quiz.title }}"</h1>
 
-<div>
-    <a href="{% url 'quiz-detail' quiz.pk %}">View Quiz</a> |
-    <a href="{% url 'quiz-delete' quiz.pk %}" onclick="return confirm('Delete entire quiz?')">Delete Quiz</a>
-    <a href="{% url 'quiz-question-create' quiz.pk %}">+ Add New Question</a>
-</div>
+    <div class="quiz-actions">
+      <a href="{% url 'quiz-detail' quiz.pk %}" class="btn btn-secondary">View Quiz</a>
+      <a href="{% url 'quiz-question-create' quiz.pk %}" class="btn btn-primary">Add New Question</a>
+      <a href="{% url 'quiz-delete' quiz.pk %}" onclick="return confirm('Delete entire quiz?')" class="btn btn-danger">Delete Quiz</a>
+    </div>
 
-<hr>
+    <hr>
 
-<h2>Quiz Information</h2>
-<form method="post" action="{% url 'quiz-update' quiz.pk %}">
-    {% csrf_token %}
-    <div style="margin-bottom: 15px;">
-        <label for="id_title"><strong>Title</strong></label><br>
-        <input type="text" name="title" value="{{ quiz.title }}" id="id_title" required style="width: 100%; max-width: 600px; padding: 6px;">
-    </div>
-    <div style="margin-bottom: 15px;">
-        <label for="id_description"><strong>Description</strong></label><br>
-        <textarea name="description" id="id_description" rows="3" style="width: 100%; max-width: 600px; padding: 6px;">{{ quiz.description }}</textarea>
-    </div>
-    <div style="margin-bottom: 15px;">
-        <label for="id_duration"><strong>Duration (e.g., 00:10:00 for 10 mins)</strong></label><br>
-        <input type="text" name="duration" value="{{ quiz.duration|date:'H:i:s' }}" id="id_duration" placeholder="HH:MM:SS" style="width: 120px; padding: 6px;">
-    </div>
-    <div style="margin-bottom: 15px;">
-        <label><strong>Difficulty</strong></label><br>
-        <select name="difficulty" id="id_difficulty">
+    <h2>Quiz Information</h2>
+    <form method="post" action="{% url 'quiz-update' quiz.pk %}" class="quiz-info-form">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="id_title"><strong>Title</strong></label>
+        <input type="text" name="title" value="{{ quiz.title }}" id="id_title" required class="form-input">
+      </div>
+      
+      <div class="form-group">
+        <label for="id_description"><strong>Description</strong></label>
+        <textarea name="description" id="id_description" rows="3" class="form-textarea">{{ quiz.description }}</textarea>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="id_duration"><strong>Duration (e.g., 00:10:00 for 10 mins)</strong></label>
+          <input type="text" name="duration" value="{{ quiz.duration|date:'H:i:s' }}" id="id_duration" placeholder="HH:MM:SS" class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label><strong>Difficulty</strong></label>
+          <select name="difficulty" id="id_difficulty" class="form-select">
             <option value="E" {% if quiz.difficulty == 'E' %}selected{% endif %}>Easy</option>
             <option value="M" {% if quiz.difficulty == 'M' %}selected{% endif %}>Medium</option>
             <option value="H" {% if quiz.difficulty == 'H' %}selected{% endif %}>Hard</option>
-        </select>
-    </div>
-    <div style="margin-bottom: 15px;">
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
         <label>
-            <input type="checkbox" name="is_active" value="true" {% if quiz.is_active %}checked{% endif %}>
-            Active (can be attempted)
+          <input type="checkbox" name="is_active" value="true" {% if quiz.is_active %}checked{% endif %}>
+          Active (can be attempted)
         </label>
-    </div>
-    <button type="submit">Save Quiz Info</button>
-</form>
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Save Quiz Info</button>
+    </form>
 
-<hr>
-{% if messages %}
-    {% for message in messages %}
-        <div>{{ message }}</div>
-    {% endfor %}
-{% endif %}
-<h2>Questions</h2>
-{% if questions %}
-    <ol>
-    {% for q in questions %}
-        <li style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <strong>{{ q.order }}. {{ q.text }}</strong>
-                <a href="{% url 'question-update' q.pk %}">Edit</a>
-            </div>
-            
-            {% if q.options.exists %}
-                <ul style="margin-top: 8px; padding-left: 20px;">
-                {% for opt in q.options.all %}
-                    <li>
-                        {{ opt.text }} {% if opt.is_correct %}<strong>(Correct)</strong>{% endif %}
-                    </li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                <p style="color: #888; font-style: italic;">No options yet.</p>
-            {% endif %}
+    <hr>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <h2>Questions</h2>
+    {% if questions %}
+      <ol class="questions-list">
+      {% for q in questions %}
+        <li class="question-item">
+          <div class="question-header">
+            <strong>{{ q.order }}. {{ q.text }}</strong>
+            <a href="{% url 'question-update' q.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          </div>
+          
+          {% if q.options.exists %}
+            <ul class="options-list">
+            {% for opt in q.options.all %}
+              <li class="option-item">
+                {{ opt.text }} {% if opt.is_correct %}<strong>(Correct)</strong>{% endif %}
+              </li>
+            {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted">No options yet.</p>
+          {% endif %}
         </li>
-    {% endfor %}
-    </ol>
-{% else %}
-    <p>No questions yet.</p>
-{% endif %}
+      {% endfor %}
+      </ol>
+    {% else %}
+      <p>No questions yet.</p>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

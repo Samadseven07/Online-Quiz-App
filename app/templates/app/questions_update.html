@@ -19,10 +19,10 @@
     <li>
         {{ opt.text }} {% if opt.is_correct %}(✓ Correct){% endif %}
         <a href="{% url 'option-update' opt.pk %}">✏️ Edit</a>
-        <a href="{% url 'option-delete' opt.pk %}" onclick="return confirm('Delete?')">🗑️ Delete</a>
+        <a href="{% url 'option-delete' opt.pk %}" onclick="return confirm('Delete?')">Delete</a>
     </li>
 {% empty %}
-    <li>No options. <a href="{% url 'question-option-create' object.pk %}">➕ Add Option</a></li>
+    <li>No options. <a href="{% url 'question-option-create' object.pk %}"> Add Option</a></li>
 {% endfor %}
 </ul>
 {% endblock %}
