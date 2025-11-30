@@ -1,35 +1,28 @@
 {% extends 'base.html' %}
+
 {% block title %}Available Quizzes{% endblock %}
+
 {% block content %}
-<div class="quizzes-list">
-    {% if user.is_authenticated %}
-        <div class="mb-3">
-            <a href="{% url 'quiz-create' %}" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-2"></i>Create New Quiz
-            </a>
+<div class="container">
+  {% if user.is_superuser %}
+    <a href="{% url 'quiz-create' %}" class="create-new-quiz-btn">Create Quiz</a>
+  {% endif %}
+
+  {% if quizzes %}
+    <div class="quiz-list">
+      {% for quiz in quizzes %}
+        <div class="quiz-item">
+          <h3><a href="{% url 'quiz-detail' quiz.pk %}">{{ quiz.title }}</a></h3>
+          <p>{{ quiz.description|truncatewords:20|default:"No description" }}</p>
+          <div class="meta">
+            <span class="duration"><strong>Duration:</strong> {{ quiz.duration }}</span>
+            <span class="difficulty"><strong>Difficulty:</strong> {{ quiz.get_difficulty_display }}</span>
+          </div>
         </div>
-    {% endif %}
-    
-    {% if quizzes %}
-        {% for quiz in quizzes %}
-            <div class="quiz-card">
-                <h3><a href="{% url 'quiz-detail' quiz.pk %}">{{ quiz.title }}</a></h3>
-                <p>{{ quiz.description|truncatewords:20|default:"No description" }}</p>
-                <div class="meta">
-                    <span><strong>Duration:</strong> {{ quiz.duration }}</span>
-                    <span><strong>Difficulty:</strong> {{ quiz.get_difficulty_display }}</span>
-                </div>
-                {% if user.is_superuser or quiz.created_by == user %}
-                    <div class="mt-2">
-                        <a href="{% url 'quiz-manage' quiz.pk %}" class="btn btn-sm btn-outline">Manage</a>
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
-    {% else %}
-        <div class="quiz-card">
-            <p>No active quizzes available.</p>
-        </div>
-    {% endif %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No active quizzes available.</p>
+  {% endif %}
 </div>
 {% endblock %}
