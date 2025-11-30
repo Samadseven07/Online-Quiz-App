@@ -11,7 +11,12 @@
     <div class="quiz-actions">
       <a href="{% url 'quiz-detail' quiz.pk %}" class="btn btn-secondary">View Quiz</a>
       <a href="{% url 'quiz-question-create' quiz.pk %}" class="btn btn-primary">Add New Question</a>
-      <a href="{% url 'quiz-delete' quiz.pk %}" onclick="return confirm('Delete entire quiz?')" class="btn btn-danger">Delete Quiz</a>
+      <a href="{% url 'quiz-delete' quiz.pk %}" 
+        data-confirm-delete
+        data-title="{{ quiz.title }}"
+        class="btn btn-danger">
+        Delete Quiz
+      </a>
     </div>
 
     <hr>

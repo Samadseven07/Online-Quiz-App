@@ -5,19 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Quiz App{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'app/css/style.css' %}">
     <link rel="icon" href="{% static 'images/favicon.ico' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossor\igin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    {% csrf_token %}
+    
     <nav class="nav">
         <div class="container nav-inner">
             <a href="{% url 'quiz-list' %}" class="nav-brand">QuizApp</a>
             <ul class="nav-links">
                 {% if user.is_authenticated %}
-                    <li><span>Hello, <strong>{{ user.username }}</strong>!</span></li>
+                    <li><span><strong>{{ user.username }}</strong></span></li>
                     <li>
                         <form method="post" action="{% url 'logout' %}" style="display:inline;">
                             {% csrf_token %}
@@ -52,6 +58,6 @@
         </main>
     </div>
 
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'app/js/main.js' %}"></script>
 </body>
 </html>

@@ -213,10 +213,16 @@ class DeleteQuizView(DeleteView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
-        # Only allow creator or superuser to delete
         if obj.created_by != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
         return obj
+
+    def get_success_message(self):
+        return f'Quiz "{self.object.title}" deleted successfully.'
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, self.get_success_message())
+        return super().delete(request, *args, **kwargs)
 
 @method_decorator(login_required, name='dispatch')
 class OptionUpdateView(UpdateView):
